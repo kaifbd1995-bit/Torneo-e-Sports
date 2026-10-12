@@ -1,0 +1,9 @@
+# Ignora file di ambiente
+.env
+*.env
+backend/.env
+
+# Ignora le dipendenze npm
+node_modules/
+backend/node_modules/
+frontend/node_modules/
