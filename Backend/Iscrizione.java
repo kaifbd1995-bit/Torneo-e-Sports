@@ -3,28 +3,8 @@ package it.itslazio.esports;
 import jakarta.persistence.*;
 import java.time.Instant;
 
-/**
- * Entità che rappresenta l'iscrizione di un utente a un torneo.
- *
- * Tabella MySQL: iscrizioni
- *
- * Query utili:
- *   -- Tutti gli iscritti a un torneo:
- *   SELECT u.nome, u.cognome, u.email, i.created_at
- *     FROM iscrizioni i
- *     JOIN app_users u ON u.id = i.user_id
- *    WHERE i.torneo_id = :torneoId;
- *
- *   -- Tornei a cui è iscritto un utente:
- *   SELECT t.* FROM tornei t
- *     JOIN iscrizioni i ON i.torneo_id = t.id
- *    WHERE i.user_id = :userId;
- *
- *   -- Conteggio iscritti per torneo:
- *   SELECT torneo_id, COUNT(*) AS totale
- *     FROM iscrizioni
- *    GROUP BY torneo_id;
- */
+
+ 
 @Entity
 @Table(
     name = "iscrizioni",
@@ -63,7 +43,6 @@ public class Iscrizione {
         if (createdAt == null) createdAt = Instant.now();
     }
 
-    // ── Getters & Setters ────────────────────────────────────────────────────────
     public Long getId() { return id; }
     public AppUser getUser() { return user; }
     public void setUser(AppUser user) { this.user = user; }
@@ -71,3 +50,10 @@ public class Iscrizione {
     public void setTorneo(Torneo torneo) { this.torneo = torneo; }
     public Instant getCreatedAt() { return createdAt; }
 }
+
+/*
+Questo file rappresenta l'entità **`Iscrizione`** per la mappatura della tabella di giunzione 
+nel database tramite JPA. Gestisce la relazione molti-a-molti tra utenti (`AppUser`) e tornei (`Torneo`), 
+registrando automaticamente la data e l'ora di iscrizione ed evitando iscrizioni 
+duplicate tramite un vincolo di unicità (`user_id`, `torneo_id`).
+    */
