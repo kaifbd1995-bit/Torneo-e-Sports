@@ -40,3 +40,9 @@ public class AppUser {
     public Instant getCreatedAt() { return createdAt; }
 }
 
+
+/*
+Questo file rappresenta l'entità **`AppUser`** per la mappatura dell'utente nel database tramite JPA.
+Conserva le informazioni del profilo (nome, cognome, email, hash della password e ruolo)
+e imposta automaticamente la data di registrazione (`createdAt`).
+    */
