@@ -34,3 +34,11 @@ public class AppState {
     public void setStateValue(String stateValue) { this.stateValue = stateValue; }
     public Instant getUpdatedAt() { return updatedAt; }
 }
+
+
+/*
+Questo file rappresenta l'entità **`AppState`** per la persistenza del database tramite JPA.
+Serve a memorizzare impostazioni o configurazioni dell'applicazione
+sotto forma di chiavi e valori (`stateKey` e `stateValue`),
+aggiornando automaticamente la data e l'ora dell'ultima modifica (`updatedAt`).
+*/
