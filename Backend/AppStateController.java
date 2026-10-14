@@ -44,3 +44,11 @@ public class AppStateController {
         }
     }
 }
+
+
+/*
+Questo controller gestisce la lettura e il salvataggio dello stato globale dell'applicazione 
+tramite API REST sotto la rotta /api/state. 
+Converte e memorizza i dati JSON nel database controllando che le chiavi abbiano un prefisso valido 
+(`itsx.`) e siano ben formate.
+    */
