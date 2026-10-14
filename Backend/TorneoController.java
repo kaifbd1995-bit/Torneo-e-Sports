@@ -9,20 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-/**
- * Controller pubblico e utente per i tornei.
- *
- * ── Pubbliche (nessun token richiesto) ────────────────────────────────────────
- * GET  /api/tornei                  – tutti i tornei
- * GET  /api/tornei/attivi           – tornei aperto o in_corso
- * GET  /api/tornei/{id}             – dettaglio singolo torneo
- * GET  /api/tornei/{id}/iscritti    – lista iscritti di un torneo
- *
- * ── Richiede autenticazione (Bearer token) ────────────────────────────────────
- * POST   /api/tornei/{id}/iscrizione    – iscriviti a un torneo
- * DELETE /api/tornei/{id}/iscrizione    – disiscriviti da un torneo
- * GET    /api/utente/tornei             – tornei dell'utente autenticato
- */
+
 @RestController
 public class TorneoController {
 
@@ -38,7 +25,6 @@ public class TorneoController {
         this.users = users;
     }
 
-    // ── DTO ──────────────────────────────────────────────────────────────────────
 
     record TorneoDto(
         Long id, String nome, String gioco,
@@ -49,9 +35,7 @@ public class TorneoController {
 
     record IscrittoDto(Long id, String nome, String cognome, String email, Instant iscrittoAl) {}
 
-    // ── Endpoints pubblici ───────────────────────────────────────────────────────
 
-    /** Tutti i tornei (con conteggio iscritti) */
     @GetMapping("/api/tornei")
     public List<TorneoDto> all() {
         return tornei.findAllOrderByCreatedAtDesc().stream()
@@ -59,7 +43,6 @@ public class TorneoController {
             .toList();
     }
 
-    /** Solo tornei aperti o in corso */
     @GetMapping("/api/tornei/attivi")
     public List<TorneoDto> attivi() {
         return tornei.findByStatiOrderByFineIscrizioni(
@@ -67,14 +50,12 @@ public class TorneoController {
         ).stream().map(this::toDto).toList();
     }
 
-    /** Dettaglio torneo */
     @GetMapping("/api/tornei/{id}")
     public TorneoDto detail(@PathVariable Long id) {
         return toDto(tornei.findById(id)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Torneo non trovato")));
     }
 
-    /** Lista iscritti di un torneo */
     @GetMapping("/api/tornei/{id}/iscritti")
     public List<IscrittoDto> iscritti(@PathVariable Long id) {
         tornei.findById(id)
@@ -89,9 +70,7 @@ public class TorneoController {
             )).toList();
     }
 
-    // ── Iscrizioni (autenticato) ─────────────────────────────────────────────────
-
-    /** Iscriviti a un torneo */
+  
     @PostMapping("/api/tornei/{id}/iscrizione")
     @ResponseStatus(HttpStatus.CREATED)
     public Map<String, Object> iscriviti(@PathVariable Long id, Authentication auth) {
@@ -123,7 +102,6 @@ public class TorneoController {
         return Map.of("messaggio", "Iscrizione effettuata con successo!", "torneoId", id);
     }
 
-    /** Disiscriviti da un torneo */
     @DeleteMapping("/api/tornei/{id}/iscrizione")
     public Map<String, Object> disiscriviti(@PathVariable Long id, Authentication auth) {
         Long userId = resolveUserId(auth);
@@ -141,9 +119,7 @@ public class TorneoController {
         return Map.of("messaggio", "Disiscrizione effettuata.", "torneoId", id);
     }
 
-    // ── Profilo utente ───────────────────────────────────────────────────────────
-
-    /** Tornei a cui è iscritto l'utente autenticato */
+  
     @GetMapping("/api/utente/tornei")
     public List<TorneoDto> mieiTornei(Authentication auth) {
         Long userId = resolveUserId(auth);
@@ -152,7 +128,6 @@ public class TorneoController {
             .toList();
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────────
 
     private Long resolveUserId(Authentication auth) {
         if (auth == null || !auth.isAuthenticated()) {
@@ -179,4 +154,12 @@ public class TorneoController {
     }
 }
 
+
+
+/*
+Questo file e un controller Spring Boot che gestisce le API pubbliche e per gli utenti 
+    autenticati relative ai tornei. Permette la consultazione 
+    dei tornei e degli iscritti, la gestione delle iscrizioni e disiscrizioni 
+    dell utente e il recupero dei propri tornei-
+    */
 
