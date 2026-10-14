@@ -5,21 +5,11 @@ import jakarta.validation.constraints.*;
 import java.time.Instant;
 import java.time.LocalDate;
 
-/**
- * Entità che rappresenta un torneo E-Sports.
- *
- * Tabella MySQL: tornei
- *
- * Query utili:
- *   SELECT * FROM tornei WHERE stato = 'aperto';
- *   SELECT * FROM tornei WHERE stato IN ('aperto','in_corso') ORDER BY fine_iscrizioni;
- *   SELECT COUNT(*) FROM iscrizioni WHERE torneo_id = :id;
- */
+
 @Entity
 @Table(name = "tornei")
 public class Torneo {
 
-    /** Stati possibili del torneo */
     public enum Stato { aperto, in_corso, chiuso, cancellato }
 
     @Id
@@ -65,7 +55,6 @@ public class Torneo {
         if (createdAt == null) createdAt = Instant.now();
     }
 
-    // ── Getters & Setters ────────────────────────────────────────────────────────
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getNome() { return nome; }
@@ -84,3 +73,12 @@ public class Torneo {
     public void setDescrizione(String descrizione) { this.descrizione = descrizione; }
     public Instant getCreatedAt() { return createdAt; }
 }
+
+
+
+/*
+Questo file rappresenta l'entità **`Torneo`** per la mappatura dei tornei eSports 
+nel database tramite JPA. Definisce i campi principali 
+(nome, gioco, date di iscrizione, numero massimo di partecipanti, stato ed eventuale descrizione) 
+insieme ai vincoli di validazione dei dati.
+    */
