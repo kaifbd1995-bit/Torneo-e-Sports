@@ -1,0 +1,116 @@
+/* ==========================================================================
+   pages.css – dettaglio torneo, accesso, profilo, dashboard, calendario,
+   risultati, passaggi e blocco finale della home
+   ========================================================================== */
+
+/* Passaggi e invito finale ------------------------------------------------ */
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; counter-reset: none; }
+.step { padding: 22px 24px 24px; background: var(--paper); border: 1.5px solid var(--line); border-radius: var(--radius); }
+.step h3 { margin-bottom: 6px; }
+.step p { margin: 0; color: var(--muted); }
+.step-n { display: inline-grid; place-items: center; width: 40px; height: 40px; margin-bottom: 14px; font-family: var(--font-display); font-weight: 700; color: var(--ink); background: var(--yellow); border-radius: 12px; }
+.step:nth-child(2) .step-n { color: #fff; background: var(--blue); }
+.step:nth-child(3) .step-n { color: #fff; background: var(--green); }
+
+.cta-band {
+  display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap;
+  padding: 36px 40px; color: #fff; background: var(--ink); border-radius: var(--radius-lg);
+}
+.cta-band h2 { margin-bottom: 4px; color: #fff; }
+.cta-band p { margin: 0; color: #c5cad6; }
+.cta-band .btn-primary { color: var(--ink); background: var(--yellow); border-color: var(--yellow); }
+.cta-band .btn-primary:hover { background: #fff; border-color: #fff; }
+
+/* Dettaglio torneo -------------------------------------------------------- */
+.detail { padding-bottom: 8px; }
+.detail-hero { display: flex; align-items: center; gap: 28px; padding: 24px; margin-bottom: 24px; }
+.dh-emoji { width: 132px; height: 132px; flex: none; overflow: hidden; background: var(--ink); border-radius: var(--radius); display: grid; place-items: center; }
+.dh-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.detail-hero h1 { margin-bottom: 6px; }
+.dh-hint { display: flex; align-items: center; gap: 8px; margin: 0; font-weight: 700; color: var(--ink-2); }
+.detail-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; align-items: start; }
+.detail-main { display: grid; gap: 24px; }
+.detail-main h2 { font-size: 1.15rem; }
+.detail-side { position: sticky; top: 96px; }
+.info-list > div { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.info-list > div:last-child { border-bottom: 0; padding-bottom: 0; }
+.info-list dt { color: var(--muted); }
+.info-list dd { font-weight: 700; text-align: right; }
+.join-panel { border: 2px solid var(--ink); }
+.big-count { margin: 0 0 10px; }
+.big-count strong { font-family: var(--font-display); font-weight: 700; font-size: 2.6rem; letter-spacing: -0.04em; }
+.big-count span { font-size: 1.2rem; color: var(--muted); }
+.join-action { margin: 18px 0 4px; }
+.side-note { margin: 14px 0 0; font-size: 0.93rem; color: var(--muted); }
+
+/* Accesso e registrazione ------------------------------------------------- */
+.auth-wrap { display: grid; place-items: start center; padding: 56px 0 8px; }
+.auth-card { width: 100%; max-width: 460px; padding: 36px; border: 2px solid var(--ink); border-radius: var(--radius-lg); }
+.auth-card.wide { max-width: 640px; }
+.auth-head { margin-bottom: 26px; }
+.auth-head h1 { font-size: 1.7rem; margin-bottom: 6px; }
+.auth-head p { margin: 0; color: var(--muted); }
+.auth-switch { margin: 22px 0 0; text-align: center; color: var(--muted); }
+.demo-box { margin-top: 22px; padding: 14px 16px; background: var(--chalk); border-radius: var(--radius-sm); font-size: 0.93rem; }
+.demo-box summary { cursor: pointer; font-weight: 700; }
+.demo-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 8px; }
+.demo-box .hint { margin: 0; }
+
+/* Profilo ----------------------------------------------------------------- */
+.profile-head { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; padding: 24px 26px; margin-bottom: 20px; }
+.profile-id { flex: 1 1 240px; }
+.profile-id h1 { font-size: 1.6rem; margin-bottom: 2px; }
+.profile-id p { margin: 0; }
+.my-list { display: grid; gap: 14px; }
+.my-item { display: flex; align-items: center; gap: 18px; padding: 16px 18px; background: var(--paper); border: 1.5px solid var(--line); border-radius: var(--radius); }
+.my-emoji, .calendar-emoji { width: 64px; height: 64px; flex: none; overflow: hidden; display: grid; place-items: center; background: var(--ink); border-radius: 16px; }
+.my-main { flex: 1; min-width: 0; }
+.my-main h3 { margin-bottom: 2px; }
+.my-main h3 a { color: var(--ink); text-decoration: none; }
+.my-main h3 a:hover { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 3px; }
+.my-main p { margin: 0; font-size: 0.95rem; }
+.my-side { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+
+/* Dashboard admin --------------------------------------------------------- */
+.admin-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; margin-bottom: 24px; }
+.admin-head h1 { margin-bottom: 6px; }
+.admin-head .lead { margin: 0; }
+.admin-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+/* Calendario -------------------------------------------------------------- */
+.calendar-list { display: grid; gap: 16px; margin-top: 24px; }
+.calendar-day { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 24px; padding: 20px 24px; }
+.calendar-date { display: flex; flex-direction: column; justify-content: center; gap: 2px; padding-right: 20px; border-right: 1.5px solid var(--line); }
+.calendar-date strong { font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; letter-spacing: -0.03em; }
+.calendar-date span { color: var(--muted); font-size: 0.9rem; }
+.calendar-events { display: grid; gap: 14px; }
+.calendar-event { display: flex; align-items: center; gap: 16px; }
+.calendar-event-main { flex: 1; min-width: 0; }
+.calendar-event-main h3 { margin-bottom: 4px; }
+.calendar-event-main h3 a { color: var(--ink); text-decoration: none; }
+.calendar-event-main h3 a:hover { text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 3px; }
+.calendar-event-main p { display: flex; align-items: center; gap: 8px; margin: 0 0 2px; }
+.calendar-event-main small { color: var(--muted); }
+
+/* Risultati e classifica -------------------------------------------------- */
+.result-entry { margin: 24px 0; }
+.results-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 24px; margin-top: 24px; align-items: start; }
+.results-grid h2 { font-size: 1.15rem; }
+.result-list { display: grid; }
+.result-row { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.result-row:last-child { border-bottom: 0; }
+.result-trophy { display: grid; place-items: center; width: 44px; height: 44px; flex: none; background: var(--yellow); border-radius: 50%; }
+.result-main { flex: 1; min-width: 0; }
+.result-main h3 { margin-bottom: 2px; font-size: 1.02rem; }
+.result-main p { margin: 0; }
+.result-main small { color: var(--muted); }
+.score-pill { padding: 6px 14px; font-weight: 700; color: #fff; background: var(--ink); border-radius: 999px; white-space: nowrap; }
+
+/* Impostazione admin: limite tornei per utente */
+.settings-card { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 28px; margin: 24px 0; }
+.settings-text { flex: 1 1 320px; }
+.settings-text h2 { margin: 0 0 6px; font-size: 1.15rem; }
+.settings-text p { margin: 0; }
+.settings-controls { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+.settings-controls .field { margin: 0; min-width: 190px; }
+.limit-note { margin: 12px 0 0; }
