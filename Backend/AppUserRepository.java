@@ -16,4 +16,8 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     boolean existsByEmailIgnoreCase(String email);
 }
 
-
+/*
+Questo file è un **Repository JPA** per la gestione degli utenti (`AppUser`) nel database.
+Oltre alle operazioni CRUD standard, fornisce metodi personalizzati per cercare un utente 
+o verificarne l'esistenza tramite la sua email ignorando le lettere maiuscole/minuscole.
+    */
