@@ -135,3 +135,9 @@ public class AuthController {
 }
 
 
+
+/*
+Questo controller gestisce la registrazione (`/register`), il login (`/login`)
+e la lettura del profilo (`/me`) degli utenti. Crittografa le password con BCrypt e genera token JWT firmati
+per autenticare le successive richieste alle API.
+    */
