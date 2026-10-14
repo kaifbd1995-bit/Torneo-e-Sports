@@ -6,12 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-/**
- * Inizializzatore dati demo: crea l'utente admin e alcuni tornei di esempio
- * nel database MySQL all'avvio dell'applicazione (solo se non esistono già).
- *
- * Credenziali admin: admin@itslazio.it / Admin123!
- */
+
 @Configuration
 public class DemoDataInitializer {
 
@@ -21,7 +16,6 @@ public class DemoDataInitializer {
                                    BCryptPasswordEncoder encoder) {
         return args -> {
 
-            // ── Admin ────────────────────────────────────────────────────────────
             AppUser admin;
             if (!users.existsByEmailIgnoreCase("admin@itslazio.it")) {
                 admin = new AppUser();
@@ -32,13 +26,11 @@ public class DemoDataInitializer {
                 admin.setPasswordHash(encoder.encode("Admin123!"));
                 users.save(admin);
             } else {
-                // Aggiorna la password admin ad ogni avvio (sicuro per sviluppo)
                 admin = users.findByEmailIgnoreCase("admin@itslazio.it").orElseThrow();
                 admin.setPasswordHash(encoder.encode("Admin123!"));
                 users.save(admin);
             }
 
-            // ── Utente demo ──────────────────────────────────────────────────────
             if (!users.existsByEmailIgnoreCase("mario.rossi@example.com")) {
                 AppUser mario = new AppUser();
                 mario.setNome("Mario");
@@ -55,7 +47,6 @@ public class DemoDataInitializer {
             }
 
 
-            // ── Tornei demo (solo se il DB è vuoto) ──────────────────────────────
             if (tornei.count() == 0) {
                 LocalDate oggi = LocalDate.now();
 
@@ -113,3 +104,11 @@ public class DemoDataInitializer {
         };
     }
 }
+
+
+/*
+Questo file popola il database all'avvio dell'applicazione creando automaticamente l'utente admin, 
+un utente di prova e alcuni tornei di esempio (se non sono già presenti). 
+Inoltre, ad ogni avvio provvede ad aggiornare e resettare le password predefinite degli utenti demo 
+per l'ambiente di sviluppo.
+    */
