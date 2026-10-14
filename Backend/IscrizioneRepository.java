@@ -21,14 +21,17 @@ public interface IscrizioneRepository extends JpaRepository<Iscrizione, Long> {
     boolean existsByUserIdAndTorneoId(Long userId, Long torneoId);
 
     void deleteByTorneoId(Long torneoId);
+
+    @Query("SELECT COUNT(i) FROM Iscrizione i WHERE i.user.id = :userId AND i.torneo.stato IN :stati")
+    long countByUserIdAndStati(@Param("userId") Long userId, @Param("stati") List<Torneo.Stato> stati);
 }
-
-
-
 
 /*
 Questo file e un repository JPA che gestisce le iscrizioni ai tornei nel database.
 Fornisce metodi per verificare se un utente e gia iscritto, contare i partecipanti,
 recuperare la lista degli iscritti e cancellare le iscrizioni associate a un torneo.
+Nel nuovo file IscrizioneRepository e stato aggiunto il metodo personalizzato countByUserIdAndStati. 
+Questo metodo esegue una query per contare a quanti tornei 
+in uno specifico stato (come aperti o in corso) e gia iscritto un determinato utente.
     */
 
