@@ -150,3 +150,9 @@ public class AdminController {
 }
 
 
+
+
+/*Questo controller gestisce le operazioni backend riservate agli amministratori per la creazione, modifica, cambio 
+stato ed eliminazione dei tornei. Inoltre, permette di visualizzare l'elenco completo 
+degli utenti e la lista degli iscritti a ogni singolo torneo.
+*/
