@@ -5,16 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-/**
- * Impostazione globale dell'applicazione (coppia chiave/valore).
- *
- * Tabella MySQL: impostazioni (creata automaticamente da Hibernate).
- *
- * Query utili:
- *   SELECT * FROM impostazioni;
- *   -- Limite di tornei contemporanei per utente:
- *   SELECT valore FROM impostazioni WHERE chiave = 'max_tornei_per_utente';
- */
 @Entity
 @Table(name = "impostazioni")
 public class Impostazione {
@@ -38,3 +28,12 @@ public class Impostazione {
     public String getValore() { return valore; }
     public void setValore(String valore) { this.valore = valore; }
 }
+
+
+
+/*
+Questo file e l entita Impostazione per la mappatura della tabella delle impostazioni globali 
+nel database tramite JPA (cite: 15). Memorizza le configurazioni di sistema come 
+coppie chiave e valore, permettendo di salvare e recuperare parametri dell applicazione come 
+il limite massimo di tornei per utente.
+    */
