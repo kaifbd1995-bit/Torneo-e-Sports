@@ -15,14 +15,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-/**
- * Configurazione Spring Security:
- *  - stateless (JWT, nessuna sessione HTTP)
- *  - CSRF disabilitato (API REST)
- *  - Rotte pubbliche: GET /api/tornei/**, POST /api/auth/**
- *  - Rotte utente: POST/DELETE /api/tornei/{id}/iscrizione, GET /api/utente/**
- *  - Rotte admin: /api/admin/**  (solo ROLE_ADMIN)
- */
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -45,21 +38,13 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // ── Risorse statiche e pagine ─────────────────────────────────────
                 .requestMatchers("/", "/index.html", "/css/**", "/js/**", "/img/**", "/favicon.ico").permitAll()
-                // ── Autenticazione pubblica ───────────────────────────────────────
                 .requestMatchers("/api/auth/**").permitAll()
-                // ── Tornei: lettura pubblica ──────────────────────────────────────
                 .requestMatchers(HttpMethod.GET, "/api/tornei/**").permitAll()
-                // ── Stato app (legacy) ────────────────────────────────────────────
                 .requestMatchers(HttpMethod.GET, "/api/state/**").permitAll()
-                // ── Iscrizioni: richiede login ────────────────────────────────────
                 .requestMatchers("/api/tornei/*/iscrizione").authenticated()
-                // ── Profilo utente ────────────────────────────────────────────────
                 .requestMatchers("/api/utente/**").authenticated()
-                // ── Dashboard admin ───────────────────────────────────────────────
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                // ── Tutto il resto richiede autenticazione ────────────────────────
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -80,3 +65,13 @@ public class SecurityConfig {
         return source;
     }
 }
+
+/*
+Questo file definisce le regole di sicurezza dell'applicazione tramite Spring Security. 
+Configura la gestione delle autorizzazioni per le rotte (pubbliche, utente o admin),
+attiva la gestione dei token JWT in modalità stateless e imposta le regole CORS 
+per consentire le chiamate dal frontend.Questo file definisce le regole di sicurezza dell'applicazione 
+tramite Spring Security. Configura la gestione delle autorizzazioni per le rotte 
+(pubbliche, utente o admin), attiva la gestione dei token JWT in modalità stateless e imposta 
+le regole CORS per consentire le chiamate dal frontend.
+    */
