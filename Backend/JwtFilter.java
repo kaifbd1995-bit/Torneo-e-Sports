@@ -19,10 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-/**
- * Filtro JWT: legge il Bearer token dall'header Authorization,
- * lo valida con la chiave segreta e popola il SecurityContext.
- */
+
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -56,9 +53,17 @@ public class JwtFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
             } catch (JwtException | IllegalArgumentException ignored) {
-                // token non valido: l'utente rimane non autenticato
             }
         }
         filterChain.doFilter(request, response);
     }
 }
+
+
+
+/*
+Questo file è un filtro di sicurezza JWT per Spring Security. 
+Intercetta ogni richiesta HTTP, estrae il token dall'header Authorization, 
+ne verifica la validità con la chiave segreta ed imposta l'utente come autenticato
+con il relativo ruolo nel contesto di sicurezza.
+    */
