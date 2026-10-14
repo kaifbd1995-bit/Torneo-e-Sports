@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,13 +17,16 @@ public class TorneoController {
     private final TorneoRepository tornei;
     private final IscrizioneRepository iscrizioni;
     private final AppUserRepository users;
+    private final ImpostazioniService impostazioni;
 
     public TorneoController(TorneoRepository tornei,
                             IscrizioneRepository iscrizioni,
-                            AppUserRepository users) {
+                            AppUserRepository users,
+                            ImpostazioniService impostazioni) {
         this.tornei = tornei;
         this.iscrizioni = iscrizioni;
         this.users = users;
+        this.impostazioni = impostazioni;
     }
 
 
@@ -70,9 +74,9 @@ public class TorneoController {
             )).toList();
     }
 
-  
     @PostMapping("/api/tornei/{id}/iscrizione")
     @ResponseStatus(HttpStatus.CREATED)
+    @Transactional
     public Map<String, Object> iscriviti(@PathVariable Long id, Authentication auth) {
         Long userId = resolveUserId(auth);
         Torneo t = tornei.findById(id)
@@ -89,8 +93,17 @@ public class TorneoController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sei già iscritto a questo torneo");
         }
 
-        AppUser user = users.findById(userId)
+        AppUser user = users.findByIdForUpdate(userId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utente non trovato"));
+
+       
+        int max = impostazioni.getMaxTorneiPerUtente();
+        long attive = iscrizioni.countByUserIdAndStati(userId, List.of(Torneo.Stato.aperto, Torneo.Stato.in_corso));
+        if (attive >= max) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                "Hai raggiunto il limite di " + max + (max == 1 ? " torneo" : " tornei")
+                + " contemporanei: disiscriviti da un torneo per iscriverti a un altro");
+        }
 
         try {
             Iscrizione i = new Iscrizione(user, t);
@@ -119,7 +132,7 @@ public class TorneoController {
         return Map.of("messaggio", "Disiscrizione effettuata.", "torneoId", id);
     }
 
-  
+
     @GetMapping("/api/utente/tornei")
     public List<TorneoDto> mieiTornei(Authentication auth) {
         Long userId = resolveUserId(auth);
@@ -158,8 +171,12 @@ public class TorneoController {
 
 /*
 Questo file e un controller Spring Boot che gestisce le API pubbliche e per gli utenti 
-    autenticati relative ai tornei. Permette la consultazione 
-    dei tornei e degli iscritti, la gestione delle iscrizioni e disiscrizioni 
-    dell utente e il recupero dei propri tornei-
+ autenticati relative ai tornei. Permette la consultazione 
+dei tornei e degli iscritti, la gestione delle iscrizioni e disiscrizioni 
+dell utente e il recupero dei propri tornei.
+Nel metodo di iscrizione e stato aggiunto il controllo del limite massimo di tornei contemporanei 
+a cui un utente puo iscriversi. 
+Viene integrato il servizio delle impostazioni per recuperare questo limite e 
+si verifica quante iscrizioni attive ha gia l utente, bloccando l operazione se il massimo viene superato.
     */
 
