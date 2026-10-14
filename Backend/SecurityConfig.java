@@ -15,7 +15,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -41,6 +40,7 @@ public class SecurityConfig {
                 .requestMatchers("/", "/index.html", "/css/**", "/js/**", "/img/**", "/favicon.ico").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/tornei/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/impostazioni").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/state/**").permitAll()
                 .requestMatchers("/api/tornei/*/iscrizione").authenticated()
                 .requestMatchers("/api/utente/**").authenticated()
@@ -74,4 +74,8 @@ per consentire le chiamate dal frontend.Questo file definisce le regole di sicur
 tramite Spring Security. Configura la gestione delle autorizzazioni per le rotte 
 (pubbliche, utente o admin), attiva la gestione dei token JWT in modalità stateless e imposta 
 le regole CORS per consentire le chiamate dal frontend.
+Nel nuovo file SecurityConfig e stata aggiunta la rotta pubblica GET per le impostazioni 
+globali dell applicazione. Questo permette a chiunque di consultare 
+la configurazione relativa al limite massimo di tornei, mantenendo invece 
+le modifiche riservate agli utenti admin.
     */
