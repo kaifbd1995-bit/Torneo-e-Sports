@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-
 @Configuration
 public class DemoDataInitializer {
 
@@ -21,6 +20,7 @@ public class DemoDataInitializer {
                 admin = new AppUser();
                 admin.setNome("Admin");
                 admin.setCognome("ITS Lazio");
+                admin.setNickname("admin");
                 admin.setEmail("admin@itslazio.it");
                 admin.setRole("admin");
                 admin.setPasswordHash(encoder.encode("Admin123!"));
@@ -35,17 +35,16 @@ public class DemoDataInitializer {
                 AppUser mario = new AppUser();
                 mario.setNome("Mario");
                 mario.setCognome("Rossi");
+                mario.setNickname("MarioR");
                 mario.setEmail("mario.rossi@example.com");
                 mario.setPasswordHash(encoder.encode("Password123"));
                 mario.setRole("user");
                 users.save(mario);
             } else {
-                // Aggiorna la password demo ad ogni avvio
                 AppUser mario = users.findByEmailIgnoreCase("mario.rossi@example.com").orElseThrow();
                 mario.setPasswordHash(encoder.encode("Password123"));
                 users.save(mario);
             }
-
 
             if (tornei.count() == 0) {
                 LocalDate oggi = LocalDate.now();
@@ -104,7 +103,6 @@ public class DemoDataInitializer {
         };
     }
 }
-
 
 /*
 Questo file popola il database all'avvio dell'applicazione creando automaticamente l'utente admin, 
