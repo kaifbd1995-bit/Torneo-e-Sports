@@ -7,12 +7,6 @@ import jakarta.validation.constraints.NotNull;
 import java.util.Map;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * Impostazioni globali.
- *
- * GET /api/admin/settings/max-tornei – solo ADMIN: limite di tornei per utente
- * PUT /api/admin/settings/max-tornei – solo ADMIN: modifica il limite (vale per tutti gli utenti)
- */
 @RestController
 public class ImpostazioniController {
 
@@ -38,3 +32,12 @@ public class ImpostazioniController {
         return Map.of("maxTornei", v);
     }
 }
+
+
+
+
+/*
+Questo file è un controller REST riservato agli amministratori per la gestione delle impostazioni globali.
+Espone endpoint per consultare e modificare il limite massimo di tornei a cui un utente
+può essere iscritto contemporaneamente.
+    */
