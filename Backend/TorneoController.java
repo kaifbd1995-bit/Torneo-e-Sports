@@ -11,24 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-/**
- * Controller pubblico e utente per i tornei.
- *
- * ── Pubbliche (nessun token richiesto) ────────────────────────────────────────
- * GET  /api/stats                      – metriche homepage
- * GET  /api/tornei[?status=]           – catalogo tornei (filtro stato)
- * GET  /api/tornei/prossima-scadenza   – torneo in evidenza
- * GET  /api/tornei/{id}                – dettaglio singolo torneo
- * GET  /api/tornei/{id}/iscritti       – lista iscritti di un torneo
- *
- * ── Richiede autenticazione (Bearer token) ────────────────────────────────────
- * POST   /api/tornei/{id}/iscrizioni   – iscriviti a un torneo
- * DELETE /api/tornei/{id}/iscrizioni   – disiscriviti da un torneo
- * GET    /api/me                       – profilo utente
- * GET    /api/me/tornei                – tornei dell'utente
- * GET    /api/me/tornei/count          – conteggio tornei attivi + limite
- * GET    /api/me/iscrizioni/{id}       – stato iscrizione a un torneo
- */
+
 @RestController
 public class TorneoController {
 
@@ -47,7 +30,6 @@ public class TorneoController {
         this.impostazioni = impostazioni;
     }
 
-    // ── DTO ──────────────────────────────────────────────────────────────────────
 
     record TorneoDto(
         Long id, String nome, String gioco,
@@ -58,9 +40,6 @@ public class TorneoController {
 
     record IscrittoDto(Long id, String nome, String cognome, String nickname, String email, Instant iscrittoAl) {}
 
-    // ── Endpoints pubblici ───────────────────────────────────────────────────────
-
-    /** Catalogo tornei. Filtro opzionale ?status=aperti|in_corso|conclusi|cancellati */
     @GetMapping("/api/tornei")
     public List<TorneoDto> all(@RequestParam(required = false) String status) {
         Torneo.Stato filtro = parseStatus(status);
@@ -70,7 +49,6 @@ public class TorneoController {
             .toList();
     }
 
-    /** Statistiche generali per la homepage */
     @GetMapping("/api/stats")
     public Map<String, Object> stats() {
         long aperte = tornei.findByStatoOrderByFineIscrizioniAsc(Torneo.Stato.aperto).size();
@@ -84,7 +62,6 @@ public class TorneoController {
             "iscrizioniTotali", totali);
     }
 
-    /** Torneo aperto con la scadenza iscrizioni più vicina (e ancora posti liberi) */
     @GetMapping("/api/tornei/prossima-scadenza")
     public TorneoDto prossimaScadenza() {
         LocalDate oggi = LocalDate.now();
@@ -96,14 +73,12 @@ public class TorneoController {
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nessun torneo con iscrizioni aperte"));
     }
 
-    /** Dettaglio torneo */
     @GetMapping("/api/tornei/{id}")
     public TorneoDto detail(@PathVariable Long id) {
         return toDto(tornei.findById(id)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Torneo non trovato")));
     }
 
-    /** Lista iscritti di un torneo */
     @GetMapping("/api/tornei/{id}/iscritti")
     public List<IscrittoDto> iscritti(@PathVariable Long id) {
         tornei.findById(id)
@@ -119,9 +94,7 @@ public class TorneoController {
             )).toList();
     }
 
-    // ── Iscrizioni (autenticato) ─────────────────────────────────────────────────
 
-    /** Iscriviti a un torneo */
     @PostMapping("/api/tornei/{id}/iscrizioni")
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
@@ -141,12 +114,9 @@ public class TorneoController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sei già iscritto a questo torneo");
         }
 
-        // Blocco la riga dell'utente: due richieste simultanee non possono superare il limite
         AppUser user = users.findByIdForUpdate(userId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utente non trovato"));
 
-        // Limite di tornei contemporanei (valore globale impostato dall'admin).
-        // Contano le iscrizioni a tornei ancora attivi (aperto / in corso).
         int max = impostazioni.getMaxTorneiPerUtente();
         long attive = iscrizioni.countByUserIdAndStati(userId, List.of(Torneo.Stato.aperto, Torneo.Stato.in_corso));
         if (attive >= max) {
@@ -165,7 +135,6 @@ public class TorneoController {
         return Map.of("messaggio", "Iscrizione effettuata con successo!", "torneoId", id);
     }
 
-    /** Disiscriviti da un torneo */
     @DeleteMapping("/api/tornei/{id}/iscrizioni")
     public Map<String, Object> disiscriviti(@PathVariable Long id, Authentication auth) {
         Long userId = resolveUserId(auth);
@@ -183,11 +152,9 @@ public class TorneoController {
         return Map.of("messaggio", "Disiscrizione effettuata.", "torneoId", id);
     }
 
-    // ── Profilo utente (/api/me) ─────────────────────────────────────────────────
 
     record MeDto(Long id, String nome, String cognome, String nickname, String email, String role, Instant createdAt) {}
 
-    /** Dati del profilo collegato */
     @GetMapping("/api/me")
     public MeDto me(Authentication auth) {
         AppUser u = users.findById(resolveUserId(auth))
@@ -195,7 +162,6 @@ public class TorneoController {
         return new MeDto(u.getId(), u.getNome(), u.getCognome(), u.getNickname(), u.getEmail(), u.getRole(), u.getCreatedAt());
     }
 
-    /** Tornei a cui è iscritto l'utente autenticato */
     @GetMapping("/api/me/tornei")
     public List<TorneoDto> mieiTornei(Authentication auth) {
         Long userId = resolveUserId(auth);
@@ -204,7 +170,6 @@ public class TorneoController {
             .toList();
     }
 
-    /** Numero di tornei attivi dell'utente e limite massimo corrente */
     @GetMapping("/api/me/tornei/count")
     public Map<String, Object> mieiTorneiCount(Authentication auth) {
         Long userId = resolveUserId(auth);
@@ -212,7 +177,6 @@ public class TorneoController {
         return Map.of("count", attive, "maxTornei", impostazioni.getMaxTorneiPerUtente());
     }
 
-    /** Stato dell'iscrizione dell'utente a un torneo */
     @GetMapping("/api/me/iscrizioni/{id}")
     public Map<String, Object> statoIscrizione(@PathVariable Long id, Authentication auth) {
         Long userId = resolveUserId(auth);
@@ -221,7 +185,6 @@ public class TorneoController {
         return Map.of("torneoId", id, "iscritto", iscrizioni.existsByUserIdAndTorneoId(userId, id));
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────────
 
     private static Torneo.Stato parseStatus(String s) {
         if (s == null || s.isBlank()) return null;
