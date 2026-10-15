@@ -13,6 +13,7 @@ public class AppUser {
 
     @Column(nullable = false, length = 80) private String nome;
     @Column(nullable = false, length = 80) private String cognome;
+    @Column(length = 50) private String nickname;
     @Column(nullable = false, length = 190) private String email;
     @Column(nullable = false, length = 100) private String passwordHash;
     @Column(nullable = false, length = 20) private String role = "user";
@@ -31,6 +32,8 @@ public class AppUser {
     public void setNome(String nome) { this.nome = nome; }
     public String getCognome() { return cognome; }
     public void setCognome(String cognome) { this.cognome = cognome; }
+    public String getNickname() { return nickname; }
+    public void setNickname(String nickname) { this.nickname = nickname; }
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email == null ? null : email.trim().toLowerCase(); }
     public String getPasswordHash() { return passwordHash; }
