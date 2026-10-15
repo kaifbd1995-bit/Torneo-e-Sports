@@ -18,13 +18,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-/**
- * Controller autenticazione.
- *
- * POST /api/auth/register – registra un nuovo utente
- * POST /api/auth/login – login, restituisce JWT
- * GET /api/auth/me – profilo dell'utente autenticato (richiede Bearer token)
- */
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -43,11 +36,11 @@ public class AuthController {
         this.encoder = encoder;
     }
 
-    // ── DTO / Record ─────────────────────────────────────────────────────────────
 
     public record RegisterRequest(
             @NotBlank @Size(max = 80) String nome,
             @NotBlank @Size(max = 80) String cognome,
+            @NotBlank @Size(min = 2, max = 50) String nickname,
             @NotBlank @Email @Size(max = 190) String email,
             @NotBlank @Size(min = 8, max = 100) String password) {
     }
@@ -61,14 +54,12 @@ public class AuthController {
             Long id,
             String nome,
             String cognome,
+            String nickname,
             String email,
             String role,
             Instant createdAt) {
     }
 
-    // ── Endpoints ────────────────────────────────────────────────────────────────
-
-    /** Registrazione nuovo utente */
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public Map<String, Object> register(@Valid @RequestBody RegisterRequest request) {
@@ -79,6 +70,7 @@ public class AuthController {
         AppUser user = new AppUser();
         user.setNome(request.nome().trim());
         user.setCognome(request.cognome().trim());
+        user.setNickname(request.nickname().trim());
         user.setEmail(email);
         user.setPasswordHash(encoder.encode(request.password()));
         user.setRole("user");
@@ -90,7 +82,6 @@ public class AuthController {
                 "user", toDto(user));
     }
 
-    /** Login */
     @PostMapping("/login")
     public Map<String, Object> login(@Valid @RequestBody LoginRequest request) {
         AppUser user = users.findByEmailIgnoreCase(request.email().trim())
@@ -102,22 +93,8 @@ public class AuthController {
                 "user", toDto(user));
     }
 
-    /** Profilo utente autenticato */
-    @GetMapping("/me")
-    public UserDto me(Authentication auth) {
-        if (auth == null || !auth.isAuthenticated()) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non autenticato");
-        }
-        Long userId = Long.valueOf((String) auth.getPrincipal());
-        AppUser user = users.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Utente non trovato"));
-        return toDto(user);
-    }
-
-    // ── Helpers ──────────────────────────────────────────────────────────────────
-
     private UserDto toDto(AppUser u) {
-        return new UserDto(u.getId(), u.getNome(), u.getCognome(), u.getEmail(), u.getRole(), u.getCreatedAt());
+        return new UserDto(u.getId(), u.getNome(), u.getCognome(), u.getNickname(), u.getEmail(), u.getRole(), u.getCreatedAt());
     }
 
     private String buildToken(AppUser u) {
