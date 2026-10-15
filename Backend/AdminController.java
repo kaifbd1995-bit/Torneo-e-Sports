@@ -46,9 +46,9 @@ public class AdminController {
         String stato, String descrizione, Instant createdAt
     ) {}
 
-    record IscrittoDto(Long id, String nome, String cognome, String email, Instant iscrittoAl) {}
+    record IscrittoDto(Long id, String nome, String cognome, String nickname, String email, Instant iscrittoAl) {}
 
-    record UtenteDto(Long id, String nome, String cognome, String email, String role, Instant createdAt) {}
+    record UtenteDto(Long id, String nome, String cognome, String nickname, String email, String role, Instant createdAt) {}
 
     @GetMapping("/tornei")
     public List<TorneoAdminDto> allTornei() {
@@ -106,16 +106,27 @@ public class AdminController {
                 i.getUser().getId(),
                 i.getUser().getNome(),
                 i.getUser().getCognome(),
+                i.getUser().getNickname(),
                 i.getUser().getEmail(),
                 i.getCreatedAt()
             )).toList();
+    }
+
+    @DeleteMapping("/tornei/{id}/iscritti/{userId}")
+    @Transactional
+    public Map<String, Object> rimuoviIscritto(@PathVariable Long id, @PathVariable Long userId) {
+        findTorneo(id);
+        Iscrizione i = iscrizioni.findByUserIdAndTorneoId(userId, id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Iscrizione non trovata"));
+        iscrizioni.delete(i);
+        return Map.of("messaggio", "Iscritto rimosso dal torneo", "torneoId", id, "userId", userId);
     }
 
     @GetMapping("/utenti")
     public List<UtenteDto> allUtenti() {
         return users.findAll().stream()
             .map(u -> new UtenteDto(
-                u.getId(), u.getNome(), u.getCognome(),
+                u.getId(), u.getNome(), u.getCognome(), u.getNickname(),
                 u.getEmail(), u.getRole(), u.getCreatedAt()
             )).toList();
     }
@@ -148,7 +159,6 @@ public class AdminController {
         );
     }
 }
-
 
 
 
