@@ -12,7 +12,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import java.util.List;
 
 @Configuration
@@ -39,11 +38,11 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/index.html", "/css/**", "/js/**", "/img/**", "/favicon.ico").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/tornei/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/impostazioni").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/stats", "/api/tornei", "/api/tornei/prossima-scadenza").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/tornei/*", "/api/tornei/*/iscritti").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/state/**").permitAll()
-                .requestMatchers("/api/tornei/*/iscrizione").authenticated()
-                .requestMatchers("/api/utente/**").authenticated()
+                .requestMatchers("/api/tornei/*/iscrizioni").authenticated()
+                .requestMatchers("/api/me", "/api/me/**").authenticated()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
